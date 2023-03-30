@@ -22,7 +22,7 @@ function Droplet:reset()
 		self:delayRetry()
 		return
 	end
-	print("Droplet using slot: " .. slot)
+	print("Droplet " .. self.label .. " using slot: " .. slot)
 	local sample = playdate.sound.sample.new("" .. slot .. ".pda")
 	local sampleLength, sampleBuffer = sample:getLength()
 	local sampleLengthMs = sampleLength * 1000
@@ -54,19 +54,18 @@ function Droplet:reset()
 	self.orlSample = OrlSample(subsample)
 	
 	self:randomise()
-	print("droplet ready - queueing")
+	print("Droplet " .. self.label .. " ready - queueing")
 	self:queuePlayback()
 end
 
 function Droplet:queuePlayback()
-	print("Droplet:queuePlayback()")
 	playdate.timer.performAfterDelay(math.floor(math.random(5000)), function() 
 		self:play()
 	end)
 end
 
 function Droplet:play()
-	print("Droplet " .. self.label .. ":play()")
+	print("Droplet " .. self.label .. " play()")
 	self.orlSample:play(function() 
 		if math.random(100) < 25 then
 			--Change subsample entirely:
