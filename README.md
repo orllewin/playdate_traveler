@@ -11,7 +11,7 @@ If using Traveler in a music setup the source signal should be split and joined 
 |  SOURCE/SYNTH  ------/     |            |        |           |
 |                |     \     +------------+        |           |
 +----------------+      \                          |           |
-                         \-------------------------|           |
+                         \_________________________|           |
                                                    +-----------+
 ```
 
