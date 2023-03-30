@@ -1,4 +1,5 @@
 import 'CoreLibs/object'
+import 'Coracle/math'
 import 'AudioOut/orl_sample'
 
 class('Droplet').extends()
@@ -7,6 +8,8 @@ function Droplet:init(label)
 	Droplet.super.init(self)
 	
 	self.label = label
+	
+	self.rate = 0.5
 end
 
 function Droplet:delayRetry()
@@ -59,7 +62,8 @@ function Droplet:reset()
 end
 
 function Droplet:queuePlayback()
-	playdate.timer.performAfterDelay(math.floor(math.random(5000)), function() 
+	local futureMs = math.floor(math.random(map(self.rate, 0.0, 1.0, 30000, 5000)))
+	playdate.timer.performAfterDelay(futureMs, function() 
 		self:play()
 	end)
 end
@@ -98,4 +102,17 @@ end
 
 function Droplet:update()
 	if self.orlSample ~= nil then self.orlSample:update() end
+end
+ 
+--How often the sample triggers
+function Droplet:setRate(rate)
+	self.rate = rate
+end
+
+function Droplet:setAttack(attack)
+	self.orlSample:setAttack(map(attack, 0.0, 1.0, 0, 3000))
+end
+
+function Droplet:setRelease(release)
+	self.orlSample:setRelease(map(release, 0.0, 1.0, 0, 3000))
 end
