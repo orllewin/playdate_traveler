@@ -5,14 +5,14 @@ Traveller is a live effect that replays samples and grains from the past to crea
 If using Traveler in a music setup the source signal should be split and joined again in a mixer. The Playdate doesn't support pass-through audio.
 
 ```
-														 +------------+        +-----------+
+                             +------------+        +-----------+
 +----------------+           |            |        |           |
-|                |      -----|  PLAYDATE  ----------   MIXER   |
+|                |       ----|  PLAYDATE  ----------   MIXER   |
 |  SOURCE/SYNTH  ------/     |            |        |           |
 |                |     \     +------------+        |           |
 +----------------+      \                          |           |
-												 \-------------------------|           |
-																									 +-----------+
+                         \-------------------------|           |
+                                                   +-----------+
 ```
 
 ## Features
