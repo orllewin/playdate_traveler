@@ -13,7 +13,7 @@ end
 function Source:recordSample()
 	
 	self.slot += 1
-	if self.slot == 11 then
+	if self.slot == globalSlots + 1 then
 		self.slot = 1
 	end
 	

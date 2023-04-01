@@ -9,7 +9,7 @@ function Droplet:init(label)
 	
 	self.label = label
 	
-	self.rate = 0.5
+	self.rate = globalRate
 end
 
 function Droplet:delayRetry()
@@ -20,7 +20,7 @@ function Droplet:delayRetry()
 end
 
 function Droplet:reset()
-	local slot = math.floor(math.random(10))
+	local slot = math.floor(math.random(globalSlots))
 	if playdate.file.exists("" .. slot .. ".pda") == false then
 		self:delayRetry()
 		return
@@ -32,8 +32,8 @@ function Droplet:reset()
 	local sampleRate = playdate.sound.getSampleRate()
 	
 	local randomMidPointMs = math.random(math.floor(sampleLengthMs))
-	local maxWidthMs = sampleLengthMs/2
-	local widthMs = math.random(math.max(1000, math.floor(maxWidthMs)))
+	local maxWidthMs = sampleLengthMs
+	local widthMs = math.max(2500, math.random(maxWidthMs))
 		
 	--Ensure subsample is within sample range
 	if randomMidPointMs - widthMs/2 < 0 then
@@ -55,6 +55,8 @@ function Droplet:reset()
 	sample = nil
 	
 	self.orlSample = OrlSample(subsample)
+	self:setAttack(globalAttack)
+	self:setRelease(globalRelease)
 	
 	self:randomise()
 	print("Droplet " .. self.label .. " ready - queueing")
@@ -63,13 +65,15 @@ end
 
 function Droplet:queuePlayback()
 	local futureMs = math.floor(math.random(map(self.rate, 0.0, 1.0, 30000, 5000)))
+	print("Droplet " .. self.label .. " will play in " .. futureMs/1000 .. " seconds")
 	playdate.timer.performAfterDelay(futureMs, function() 
+		print("Droplet " .. self.label .. " play() length: " .. self.orlSample:getSeconds())
 		self:play()
 	end)
 end
 
 function Droplet:play()
-	print("Droplet " .. self.label .. " play()")
+	
 	self.orlSample:play(function() 
 		if math.random(100) < 25 then
 			--Change subsample entirely:
@@ -110,9 +114,11 @@ function Droplet:setRate(rate)
 end
 
 function Droplet:setAttack(attack)
+	if self.orlSample == nil then return end
 	self.orlSample:setAttack(map(attack, 0.0, 1.0, 0, 3000))
 end
 
 function Droplet:setRelease(release)
+	if self.orlSample == nil then return end
 	self.orlSample:setRelease(map(release, 0.0, 1.0, 0, 3000))
 end

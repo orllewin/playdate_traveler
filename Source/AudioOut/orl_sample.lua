@@ -15,9 +15,6 @@ function OrlSample:init(sample)
 	self.player = playdate.sound.sampleplayer.new(self.sample)
 	self.player:setVolume(1.0)
 	
-	self.channel = playdate.sound.channel.new()
-	self.channel:addSource(self.player)
-	
 	self.attack = 250
 	self.release = 150
 	self.attackTimer = nil
@@ -56,10 +53,6 @@ function OrlSample:play(onFinish)
 	end
 end
 
-function OrlSample:getChannel()
-	return self.channel
-end
-
 function OrlSample:isPlaying()
 	return self.player:isPlaying()
 end
@@ -72,6 +65,10 @@ function OrlSample:update()
 	if self.releaseActive then
 		self.player:setVolume(self.releaseTimer.value)
 	end
+end
+
+function OrlSample:getSeconds()
+	return self.sample:getLength()
 end
 
 function OrlSample:setAttack(ms)
