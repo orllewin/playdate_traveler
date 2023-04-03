@@ -13,7 +13,6 @@ function Droplet:init(label)
 end
 
 function Droplet:delayRetry()
-	print("Retrying...")
 	playdate.timer.performAfterDelay(1000, function() 
 		self:reset()
 	end)

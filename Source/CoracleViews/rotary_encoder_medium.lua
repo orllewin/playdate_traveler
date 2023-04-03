@@ -7,7 +7,10 @@ import 'CoracleViews/label_left'
 
 class('MediumRotaryEncoder').extends(playdate.graphics.sprite)
 
-function MediumRotaryEncoder:init(label, xx, yy, w, listener)
+local pixarlmed = playdate.graphics.font.new("Fonts/pixarlmed")
+local pixarlsmol = playdate.graphics.font.new("Fonts/pixarl")
+
+function MediumRotaryEncoder:init(title, subtitle, xx, yy, w, listener)
 	MediumRotaryEncoder.super.init(self)
 	
 	self.listener = listener
@@ -39,7 +42,7 @@ function MediumRotaryEncoder:init(label, xx, yy, w, listener)
 	
 	self.hasFocus = false
 	
-	local nWidth, nHeight = playdate.graphics.getTextSize(label)
+	local nWidth, nHeight = playdate.graphics.getTextSize(subtitle)
 
 	local focusedImage = playdate.graphics.image.new(w + 24, 44)
 	playdate.graphics.pushContext(focusedImage)
@@ -53,7 +56,15 @@ function MediumRotaryEncoder:init(label, xx, yy, w, listener)
 	self.focusedSprite:add()
 	self.focusedSprite:setVisible(false)
 	
-	self.label = LabelLeft(label, xx - w/2, yy - (nHeight/2), 0.4)
+	if title == nil and subtitle ~= nil then
+		self.label = LabelLeft(subtitle, xx - w/2, yy - (nHeight/2), 0.4)
+	elseif title ~= nil and subtitle ~= nil then
+		playdate.graphics.setFont(pixarlsmol)
+		self.label = LabelLeft(title, xx - w/2, yy - (nHeight/2) - 6, 1.0)
+		playdate.graphics.setFont(pixarlmed)
+		self.label = LabelLeft(subtitle, xx - w/2, yy - (nHeight/2) + 6, 0.4)
+	end
+
 
 	self.viewId = "unknown"
 	end

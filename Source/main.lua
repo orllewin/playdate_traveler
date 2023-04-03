@@ -5,16 +5,25 @@ import 'CoreLibs/timer'
 import 'Coracle/math'
 import 'CoracleViews/focus_manager'
 import 'CoracleViews/label_left'
+import 'CoracleViews/hexagram'
 import 'CoracleViews/rotary_encoder_medium'
 import 'AudioOut/droplet'
 import 'AudioIn/source'
 
 playdate.setCrankSoundsDisabled(true)
 
+globalSlots = 7
+for i=1,globalSlots do
+	if playdate.file.exists("" .. i .. ".pda") then
+		playdate.file.delete("" .. i .. ".pda")
+	end
+end
+
+
 local graphics <const> = playdate.graphics
 local sound <const> = playdate.sound
 
-globalSlots = 7
+
 
 globalRate = 0.5
 globalAttack = 0.2
@@ -30,6 +39,8 @@ end)
 
 local pixarlmed = graphics.font.new("Fonts/pixarlmed")
 graphics.setFont(pixarlmed)
+
+local pixarlsmol = graphics.font.new("Fonts/pixarl")
 
 local droplets = {}
 
@@ -154,92 +165,122 @@ end
 local source = Source()
 source:start()
 
-local titleLabel = LabelLeft("Traveller", 6, 6, 0.4)
-
 local focusManager = FocusManager()
 
 local encoderXColumn1 = 73
-local encoderXColumn2 = 205
-local encoderXColumn3 = 335
+local encoderXColumn2 = 335
 local encoderYAnchor = 60
 local encoderYSpacing = 50
 local encoderWidth = 115
 
+local yAnchor = 30
+local smallerYSpacing = 46
+
 -- Column 1
-local rateEncoder = MediumRotaryEncoder("Rate", encoderXColumn1, encoderYAnchor, encoderWidth, function(value)
+local rateHex = Hexagram(encoderXColumn1 + 90, yAnchor, 35, 0.5)
+local rateEncoder = MediumRotaryEncoder("Trigger", "Rate", encoderXColumn1, yAnchor, encoderWidth, function(value)
 	--rate change
 	setRate(value)
+	rateHex:cast(value)
 end)
 rateEncoder:setValue(globalRate)
+rateHex:cast(globalRate)
 focusManager:addView(rateEncoder, 1)
 
-local attackEncoder = MediumRotaryEncoder("Attack", encoderXColumn1, encoderYAnchor + encoderYSpacing, encoderWidth, function(value)
+local attackHex = Hexagram(encoderXColumn1 + 90, yAnchor + smallerYSpacing, 35, 0.5)
+local attackEncoder = MediumRotaryEncoder("Droplet", "Attack", encoderXColumn1, yAnchor + smallerYSpacing, encoderWidth, function(value)
 	--attack change
 	for i=1,dropletCount do
 		droplets[i]:setAttack(value)
 	end
+	
+	attackHex:cast(value)
 end)
 attackEncoder:setValue(globalAttack)
+attackHex:cast(globalAttack)
 focusManager:addView(attackEncoder, 2)
 
-local releaseEncoder = MediumRotaryEncoder("Release", encoderXColumn1, encoderYAnchor + (encoderYSpacing * 2), encoderWidth, function(value)
+local releaseHex = Hexagram(encoderXColumn1 + 90, yAnchor + (smallerYSpacing * 2), 35, 0.5)
+local releaseEncoder = MediumRotaryEncoder("Droplet", "Release", encoderXColumn1, yAnchor + (smallerYSpacing * 2), encoderWidth, function(value)
 	--release change
 	for i=1,dropletCount do
 		droplets[i]:setRelease(value)
 	end
+	
+	releaseHex:cast(value)
 end)
 releaseEncoder:setValue(globalRelease)
+releaseHex:cast(globalRelease)
 focusManager:addView(releaseEncoder, 3)
 
-local driveEncoder = MediumRotaryEncoder("Drive", encoderXColumn1, encoderYAnchor + (encoderYSpacing * 3), encoderWidth, function(value)
+local driveHex = Hexagram(encoderXColumn1 + 90, yAnchor + (smallerYSpacing * 3), 35, 0.5)
+local driveEncoder = MediumRotaryEncoder("Droplet", "Drive", encoderXColumn1, yAnchor + (smallerYSpacing * 3), encoderWidth, function(value)
 	--Global overdrive:
 	setDrive(value)
+	driveHex:cast(value)
 end)
+driveHex:cast(0.0)
 focusManager:addView(driveEncoder, 4)
 
 --Column 2
-local delayLabel = LabelLeft("Delay", 150, 50, 0.4)
-local delayLengthEncoder = MediumRotaryEncoder("Length", encoderXColumn2, encoderYAnchor + encoderYSpacing, encoderWidth, function(value)
+local delayLengthHex = Hexagram(encoderXColumn2 - 95, yAnchor, 35, 0.5)
+local delayLengthEncoder = MediumRotaryEncoder("Delay", "Length", encoderXColumn2, yAnchor, encoderWidth, function(value)
 	--delay length change
 	setDelayLength(value)
+	delayLengthHex:cast(value)
 end)
 delayLengthEncoder:setValue(globalDelayLength)
-focusManager:addView(delayLengthEncoder, 2)
+delayLengthHex:cast(globalDelayLength)
+focusManager:addView(delayLengthEncoder, 1)
 
-local delayFeedbackEncoder = MediumRotaryEncoder("FBack.", encoderXColumn2, encoderYAnchor + (encoderYSpacing * 2), encoderWidth, function(value)
+local delayFeedbackHex = Hexagram(encoderXColumn2 - 95, yAnchor + smallerYSpacing, 35, 0.5)
+local delayFeedbackEncoder = MediumRotaryEncoder("Delay", "FBack.", encoderXColumn2, yAnchor + smallerYSpacing, encoderWidth, function(value)
 	--delay feedback change
 	setDelayFeedback(value)
+	delayFeedbackHex:cast(value)
 end)
 delayFeedbackEncoder:setValue(globalDelayFeedback)
-focusManager:addView(delayFeedbackEncoder, 3)
+delayFeedbackHex:cast(globalDelayFeedback)
+focusManager:addView(delayFeedbackEncoder, 2)
 
-local delayLevelEncoder = MediumRotaryEncoder("Level", encoderXColumn2, encoderYAnchor + (encoderYSpacing * 3), encoderWidth, function(value)
+local delayLevelHex = Hexagram(encoderXColumn2 - 95, yAnchor + (smallerYSpacing * 2), 35, 0.5)
+local delayLevelEncoder = MediumRotaryEncoder("Delay", "Level", encoderXColumn2, yAnchor + (smallerYSpacing * 2), encoderWidth, function(value)
 	--delay level change
 	setDelayLevel(value)
+	delayLevelHex:cast(value)
 end)
 delayLevelEncoder:setValue(globalDelayLevel)
-focusManager:addView(delayLevelEncoder, 4)
+delayLevelHex:cast(0.0)
+focusManager:addView(delayLevelEncoder, 3)
 
---Column 3
-local lowPassLabel = LabelLeft("Low Pass", 273, 50, 0.4)
-
-local lowPassFreqEncoder = MediumRotaryEncoder("Freq.", encoderXColumn3, encoderYAnchor + encoderYSpacing, encoderWidth, function(value)
+local loPassFreqHex = Hexagram(encoderXColumn2 - 95, yAnchor + (smallerYSpacing * 3), 35, 0.5)
+local lowPassFreqEncoder = MediumRotaryEncoder("Low Pass", "Freq.", encoderXColumn2, yAnchor + (smallerYSpacing * 3), encoderWidth, function(value)
  	globalLowPassFrequency = value
 	lowpass:setFrequency(map(globalLowPassFrequency, 0.0, 1.0, 100, 10000))
+	loPassFreqHex:cast(value)
 end)
 lowPassFreqEncoder:setValue(globalLowPassFrequency)
-focusManager:addView(lowPassFreqEncoder, 2)
+loPassFreqHex:cast(globalLowPassFrequency)
+focusManager:addView(lowPassFreqEncoder, 4)
 
-local lowPassResEncoder = MediumRotaryEncoder("Res.", encoderXColumn3, encoderYAnchor + (encoderYSpacing * 2), encoderWidth, function(value)
+local loPassResHex = Hexagram(encoderXColumn2 - 95, yAnchor + (smallerYSpacing * 4), 35, 0.5)
+local lowPassResEncoder = MediumRotaryEncoder("Low Pass", "Res.", encoderXColumn2, yAnchor + (smallerYSpacing * 4), encoderWidth, function(value)
 	globalLowPassRes = value
 	lowpass:setResonance(globalLowPassRes)
+	loPassResHex:cast(value)
 end)
 lowPassResEncoder:setValue(globalLowPassRes)
-focusManager:addView(lowPassResEncoder, 3)
+loPassResHex:cast(globalLowPassRes)
+focusManager:addView(lowPassResEncoder, 5)
 
 focusManager:start()
 focusManager:push()
 
+playdate.graphics.setColor(playdate.graphics.kColorBlack)
+local hexagramImage = playdate.graphics.image.new("Images/hexagram")
+local logoSprite = playdate.graphics.sprite.new( hexagramImage )
+logoSprite:moveTo(105, 215)
+logoSprite:add() 
 
 
 function playdate.update()
