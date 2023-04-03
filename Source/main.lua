@@ -23,8 +23,6 @@ end
 local graphics <const> = playdate.graphics
 local sound <const> = playdate.sound
 
-
-
 globalRate = 0.5
 globalAttack = 0.2
 globalRelease = 0.2
@@ -33,8 +31,8 @@ local inverted = true
 playdate.display.setInverted(inverted)
 
 graphics.sprite.setBackgroundDrawingCallback(function(x, y, width, height)
-	playdate.graphics.setColor(playdate.graphics.kColorWhite)
-	playdate.graphics.fillRect(0, 0, 400, 240)
+	graphics.setColor(graphics.kColorWhite)
+	graphics.fillRect(0, 0, 400, 240)
 end)
 
 local pixarlmed = graphics.font.new("Fonts/pixarlmed")
@@ -65,37 +63,35 @@ local globalLowPassFrequency = 0.8
 local globalLowPassRes = 0.2
 
 --Hi pass: not user configurable:
-local highpass = playdate.sound.twopolefilter.new(playdate.sound.kFilterHighPass)
+local highpass = sound.twopolefilter.new(sound.kFilterHighPass)
 highpass:setMix(1.0)
 highpass:setFrequency(60)
 highpass:setResonance(0.0)
-playdate.sound.addEffect(highpass)
+sound.addEffect(highpass)
 
 local globalDelay = sound.delayline.new(map(globalDelayLength, 0.0, 1.0, 0.0, maxDelay))
 globalDelay:setFeedback(globalDelayFeedback)
 globalDelay:setMix(0.0)
-playdate.sound.addEffect(globalDelay)
+sound.addEffect(globalDelay)
 
-local globalBitcrusher = playdate.sound.bitcrusher.new()
+local globalBitcrusher = sound.bitcrusher.new()
 globalBitcrusher:setAmount(0.30)
 globalBitcrusher:setUndersampling(0.55)
 globalBitcrusher:setMix(globalDriveAmount)
-playdate.sound.addEffect(globalBitcrusher)
+sound.addEffect(globalBitcrusher)
 
 
-local overdrive = playdate.sound.overdrive.new()
+local overdrive = sound.overdrive.new()
 overdrive:setGain(0.0)
 overdrive:setLimit(0.9)
 overdrive:setMix(globalDriveAmount)
-playdate.sound.addEffect(overdrive)
+sound.addEffect(overdrive)
 
-local lowpass = playdate.sound.twopolefilter.new(playdate.sound.kFilterLowPass)
+local lowpass = sound.twopolefilter.new(sound.kFilterLowPass)
 lowpass:setMix(1.0)
 lowpass:setFrequency(map(globalLowPassFrequency, 0.0, 1.0, 100, 10000))
 lowpass:setResonance(globalLowPassRes)
-playdate.sound.addEffect(lowpass)
-
-
+sound.addEffect(lowpass)
 
 function setRate(rate)
 	globalRate = rate
@@ -126,11 +122,11 @@ function setDelayLength(length)
 	globalDelayLength = length
 	local mappedDelay = map(globalDelayLength, 0.0, 1.0, 0.1, maxDelay)
 	print("Set delay length to: " .. length .. " mapped: " .. mappedDelay)
-	playdate.sound.removeEffect(globalDelay)
+	sound.removeEffect(globalDelay)
 	globalDelay = sound.delayline.new(mappedDelay)
 	globalDelay:setFeedback(globalDelayFeedback)
 	globalDelay:setMix(globalDelayLevel/2.0)
-	playdate.sound.addEffect(globalDelay)
+	sound.addEffect(globalDelay)
 	
 	globalDelayDebounce = playdate.timer.new(200, function()
 		globalDelayBlocked = false
@@ -276,9 +272,9 @@ focusManager:addView(lowPassResEncoder, 5)
 focusManager:start()
 focusManager:push()
 
-playdate.graphics.setColor(playdate.graphics.kColorBlack)
-local hexagramImage = playdate.graphics.image.new("Images/hexagram")
-local logoSprite = playdate.graphics.sprite.new( hexagramImage )
+graphics.setColor(graphics.kColorBlack)
+local hexagramImage = graphics.image.new("Images/hexagram")
+local logoSprite = graphics.sprite.new( hexagramImage )
 logoSprite:moveTo(105, 215)
 logoSprite:add() 
 
@@ -288,7 +284,7 @@ function playdate.update()
 		droplets[i]:update()
 	end
 	
-	playdate.graphics.sprite.update()
+	graphics.sprite.update()
 	playdate.timer:updateTimers()
 	
 	--See note in Source, flag checked here to trigger next sample record:
